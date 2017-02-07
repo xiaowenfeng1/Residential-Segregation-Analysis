@@ -1,0 +1,95 @@
+---
+title: "Measures of Segregation Report"
+author: "Xiaowen Feng"
+date: "1/29/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+source('./analysis.R')
+```
+
+In this report, four measures of residential segregation are evaluated (3 measures from the U.S. Census Bureau, 1 proposed by the author) across 14 cities. Massey and Denton (1988) identified 20 different indexes of segregation and classified them into five key dimensions. They are _evenness_, _exposure_, _concentration_, _centralization_ and _clustering_. This report only includes **evenness** and **exposure**. For further information, please visit this [documentation](https://www.census.gov/hhes/www/housing/resseg/pdf/app_b.pdf) from the U.S. Census Bureau. The data for this report originated from the American Community Survey. Note, all calculations in this report are based on comparing the percentage of each census tract that is _white_ or _not white_ to reduce complexity. Results in the report are not meant to imply a unified social experience for racial minorities.
+
+***
+
+###Measures of Eveness
+
+This type of measure concentrates on comparison in the spatial distributions of different groups among units in a metropolitan area. Segregation is smallest when population of majority group and minority group are evenly distributed.
+
+####Dissimilarity Index
+$$
+\frac{\sum_{i=1}^{n}{\left[{t}_{i}|({p}_{i}-P)|\right]}}{ [2TP(1-P)] } 
+$$
+
+According to the U.S. Census Bureau, the dissimilarity index is the most widely used measure of evenness. This index score can be interpreted as the percent of the population would have to move to different residential areas in order to ensure that the distribution of majority and minority groups in each neighborhood matched that for the entire metropolitan area. The score ranges from 0 to 1, with a smaller index indicating less segregation in a metropolitan area, where the majority and minority groups are more evenly distributed. A metropolitan area that contains unified neighborhoods which either only have majority or that have no majority residents would be considered as highly segregated using dissimilarity index. This index is heavily focused on individual residential areas, it overlooks the proximity of residential ares to one another. Though individual neighborhoods may be homogeneous, there may be an even distribution of a groups' neighborhoods at the metropolitan level. This index can be useful for cities that have a smaller proportion of minority group members, because it is more likely that there will not be an evenly distributed neighborhood. 
+
+***
+###Measures of exposure
+Exposure measures the possibility of social contact or interaction between members in majority and minority groups. 
+
+####Isolation Index
+$$ 
+\sum_{i=1}^{n}\left [ (\frac{x_{i}}{X})(\frac{x_{i}}{t_{i}})\right]
+$$
+
+The isolation index measures the possibility of which minority group members are exposed only to one another. It is computed as "the minority-weighted" average of the minority proportion in each area. This score also varies from 0 to 1, the smaller the index indicates less isolation(segregation) in an area. An score of zero indicates that members of a minority group have no contact with one another, while a score of one indicates that they only have contact with each other. Because this metric is sensitive to the population of minority groups in an area, it may not be a valid measurement for areas where there is a very low or high population of minority groups. 
+
+***
+####Correlation Ratio
+$$
+\frac{(I-P)}{(1-P)}
+$$
+This measure is an adjustment of the isolation index to control for the relative proportions of the majority and minority groups. It attempts to adjust for the proportion of a group in a population in order to straddle the line between evenness and exposure measurements. It is thus useful in situations in which extreme proportions of groups.
+
+
+***
+###Metric Comparison
+
+Figure 1.
+```{r , echo=FALSE, comment="", warning=FALSE, message=FALSE}
+group.bar
+```
+
+Table 1. Metric Summary
+```{r , echo=FALSE, comment="", warning=FALSE, message=FALSE}
+summary(df)
+```
+
+All three of chosen indexes can be interpreted as the smaller the index indicates less segregation in an area. However, there is a wide range of results from the three indexes. According to Figure 1, Baltimore is the most segregated city by the Isolation index. Milwaukee is the most segregated city by both the Dissimilarity and Correlation. As shown in Table 1, Correlation have a much narrower range than other measurements.
+
+The ranking of segregation is often somewhat similar for different measurements but has the potential to differ widely. Chicago, for instance, is the second most segregated metropolitan area by Isolation, while it is fifth by Correlation Ratio and only eighth by Dissimilarity. This shows that differences in proportions of minority groups between cities as well as the geographic distribution of neighborhoods themselves has a heavy impact on measurements of a city's segregation level. 
+
+
+Figure 2.
+```{r , echo=FALSE, warning=FALSE, message=FALSE}
+overlay.hist
+```
+The histogram above (Figure 2) shows the distribution of values for each metric. The Correlation Ratio has most of its values concentrated at the lower end, with the highest number between .2 and .3. Isolation is more moderated, while measurements calculated with the Dissimilarity index show the highest level of segregation.
+
+Utilizing different metrics results in a different understanding of segregation when comparing cities. While the Isolation index and Correlation Ratio are essentially based on potential social contact between members of different groups, the Dissimilarity index is rooted in the physical distribution of groups throughout the metropolitan area. Different metropolitan areas can and do have different rates of segregation when using one or another measurement due to differences in social or geographic variables.  
+
+***
+
+##Metric Proposal
+####Standard Deviation Index
+
+$$
+\frac { \sqrt { \sum _{ i=1 }^{ n }{ { ({ x }_{ i }-\bar { x } ) }^{ 2 } }  }  }{ n-1 } \quad \bar { x } \quad is\quad the\quad mean\quad of\quad all\quad { x }_{ i }
+$$
+This is a measurement ranging from 0 to .5. It calculates the proportion of minority group members in each neighborhood and is equal to the standard deviation of all of these proportions in all neighborhoods. A higher Standard Deviation Index indicates a more segregated metropolitan area. A metropolitan area with roughly equal proportion of minority group members in every neighborhood, or which is populated entirely or not at all by minority group members, is considered to be low segregation by this measurement, while a metropolitan area with a large variation in the proportion of minority group members in different neighborhoods is considered to be high segregation.
+
+A bar graph of Standard Deviation index for the 14 cities:
+```{r , echo=FALSE, warning=FALSE, message=FALSE}
+stdev.bar
+```
+While the range of standard deviation is smaller than the others, a city with a high segregation by one measurement is most likely to be highly segregated for each of the other measurement (shown in Figure 3).
+
+Figure 3.
+```{r , echo=FALSE, warning=FALSE, message=FALSE}
+comparison.plot
+```
+
+***
+####Reference
+"Racial and Ethnic Residential Segregation in the United States: 1980-2000." U.S. Census Bureau, n.d. Web. <https://www.census.gov/hhes/www/housing/resseg/pdf/app_b.pdf>.
